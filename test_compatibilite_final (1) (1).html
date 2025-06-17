@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test de Compatibilité Amoureuse Moderne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+    .container {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+    .glass {
+    background: rgba(255,255,255,0.10);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    padding: 38px 24px 32px 24px;
+    margin: 24px 0;
+    max-width: 480px;
+    width: 95vw;
+    box-sizing: border-box;
+    }
+    .start-screen, .names-screen, .question-card, .email-screen, .result-card {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s;
+    }
+    .active { display: flex; }
+    .question-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 32px;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 0.01em;
+    }
+    .progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #232323;
+    border-radius: 3px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 1px 8px 0 rgba(255,0,80,0.08);
+    }
+    .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff3576 0%, #ff8fa3 100%);
+    transition: width 0.3s cubic-bezier(.4,2,.6,1);
+    border-radius: 3px;
+    }
+    .options {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 18px;
+    align-items: center;
+    }
+    .option-btn {
+    background: linear-gradient(90deg, #ff3576 0%, #ff8fa3 100%);
+    border: none;
+    border-radius: 18px;
+    padding: 15px 32px;
+    font-size: 1.08em;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(.4,2,.6,1);
+    box-shadow: 0 2px 12px 0 rgba(255,53,118,0.10);
+    letter-spacing: 0.01em;
+    outline: none;
+    min-width: 220px;
+    max-width: 90vw;
+    word-break: break-word;
+    }
+    .option-btn:hover, .option-btn.selected {
+    background: linear-gradient(90deg, #ff8fa3 0%, #ff3576 100%);
+    color: #fff;
+    transform: scale(1.04);
+    box-shadow: 0 4px 18px 0 rgba(255,53,118,0.18);
+    }
+    .astrology-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    }
+    .astrology-grid .option-btn {
+    min-width: 140px;
+    margin-bottom: 8px;
+    padding: 16px 12px;
+    font-size: 1.05em;
+    line-height: 1.3;
+    }
+    .result-card {
+    text-align: center;
+    padding: 30px 0;
+    max-width: 1100px;
+    background: none;
+    box-shadow: none;
+    }
+    .result-score {
+    font-size: 2.5em;
+    margin: 18px 0 10px 0;
+    font-weight: bold;
+    color: #ff3576;
+    text-shadow: 0 2px 12px rgba(255,53,118,0.10);
+    }
+    .charts-container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin: 24px 0 0 0;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    }
+    .chart-wrapper {
+    background: #000;
+    padding: 15px 8px 8px 8px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    width: 380px;
+    min-width: 280px;
+    max-width: 100vw;
+    height: 250px;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    }
+    .chart-title {
+    font-size: 1.05em;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #fff;
+    text-align: center;
+    }
+    .chart-canvas {
+    width: 100% !important;
+    height: 200px !important;
+    max-height: 200px !important;
+    }
+    .analysis-section {
+    background: rgba(255,255,255,0.10);
+    padding: 22px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    margin: 18px 0;
+    text-align: left;
+    color: #fff;
+    }
+    .analysis-title {
+    font-size: 1.18em;
+    font-weight: bold;
+    color: #ff3576;
+    margin-bottom: 8px;
+    }
+    .analysis-text {
+    font-size: 1.01em;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    }
+    .theme-analysis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+    }
+    .theme-card {
+    background: rgba(255,255,255,0.10);
+    padding: 13px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    color: #fff;
+    }
+    .theme-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ff3576;
+    font-size: 1.05em;
+    }
+    .theme-score {
+    font-size: 1.18em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    }
+    .theme-text {
+    font-size: 0.97em;
+    line-height: 1.4;
+    }
+    .restart-btn {
+    background: linear-gradient(90deg, #ff3576 0%, #ff8fa3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 18px;
+    transition: all 0.2s;
+    box-shadow: 0 3px 12px rgba(255,53,118,0.10);
+    }
+    .restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,53,118,0.18);
+    }
+    .names-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+    background: none;
+    padding: 0;
+    border-radius: 15px;
+    }
+    .names-form input {
+    padding: 13px 18px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 1.08em;
+    width: 220px;
+    text-align: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .names-form input::placeholder {
+    color: rgba(255,255,255,0.7);
+    }
+    .names-form input:focus {
+    outline: none;
+    border-color: #ff3576;
+    }
+
+    /* Styles pour l'écran de collecte d'email */
+    .email-screen {
+    text-align: center;
+    }
+    .email-title {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #ff3576;
+    letter-spacing: 0.01em;
+    }
+    .email-subtitle {
+    font-size: 1.1em;
+    margin-bottom: 24px;
+    color: #fff;
+    line-height: 1.5;
+    }
+    .email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    }
+    .email-input {
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 1.1em;
+    width: 280px;
+    max-width: 90vw;
+    text-align: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    box-sizing: border-box;
+    }
+    .email-input::placeholder {
+    color: rgba(255,255,255,0.7);
+    }
+    .email-input:focus {
+    outline: none;
+    border-color: #ff3576;
+    box-shadow: 0 0 15px rgba(255,53,118,0.3);
+    }
+    .email-btn {
+    background: linear-gradient(90deg, #ff3576 0%, #ff8fa3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 15px 35px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 12px rgba(255,53,118,0.10);
+    font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .email-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,53,118,0.18);
+    }
+    .email-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    }
+    .email-message {
+    font-size: 0.95em;
+    color: rgba(255,255,255,0.8);
+    margin-top: 15px;
+    line-height: 1.4;
+    }
+    .error-message {
+    color: #ff6b6b;
+    font-size: 0.9em;
+    margin-top: 10px;
+    }
+    .success-message {
+    color: #51cf66;
+    font-size: 0.9em;
+    margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+    .glass { padding: 18px 4vw 18px 4vw; }
+    .question-title { font-size: 1.1em; }
+    .chart-wrapper { width: 100%; min-width: 0; height: 200px; }
+    .chart-canvas { height: 150px !important; max-height: 150px !important; }
+    .astrology-grid { grid-template-columns: 1fr; gap: 10px; }
+    .astrology-grid .option-btn { min-width: 120px; }
+    .charts-container { flex-direction: column; gap: 20px; }
+    .theme-analysis { grid-template-columns: 1fr; }
+    .email-title { font-size: 1.5em; }
+    .email-input { width: 250px; }
+    .result-card { padding: 20px 0; }
+    }
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glass start-screen active" id="startScreen">
+    <h1 style="font-size: 2em; margin-bottom: 18px; color:#ff3576; font-weight:700; letter-spacing:0.01em; text-align:center;">💕 Test de Compatibilité<br>Amoureuse</h1>
+    <p style="font-size: 1.08em; margin-bottom: 32px; text-align: center; color:#fff;">Découvrez votre compatibilité à travers une analyse moderne et élégante</p>
+    <button class="restart-btn" onclick="showNamesScreen()">Commencer le test</button>
+    </div>
+
+    <div class="glass names-screen" id="namesScreen">
+    <h2 style="font-size: 1.3em; margin-bottom: 18px; color:#ff3576; font-weight:700;">Entrez vos prénoms</h2>
+    <div class="names-form">
+    <input type="text" id="prenom1" placeholder="Prénom Personne 1" required maxlength="20">
+    <input type="text" id="prenom2" placeholder="Prénom Personne 2" required maxlength="20">
+    <button class="restart-btn" onclick="startTest()">Lancer le test</button>
+    </div>
+    </div>
+
+    <div class="glass question-card" id="questionCard">
+    <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="question-title" id="questionTitle"></div>
+    <div class="options" id="options"></div>
+    </div>
+
+    <!-- Nouvel écran de collecte d'email -->
+    <div class="glass email-screen" id="emailScreen">
+    <div class="email-title">🎉 Test terminé !</div>
+    <div class="email-subtitle">
+        Découvre ton score de compatibilité et reçois des conseils personnalisés pour booster ta vie amoureuse ! Entre ton email pour accéder à tes résultats exclusifs.
+    </div>
+    <div class="email-form">
+        <input type="email" id="emailInput" class="email-input" placeholder="Votre adresse email" required>
+        <button class="email-btn" id="emailBtn" onclick="submitEmail()">Voir mes résultats 💕</button>
+        <div id="emailMessage" class="email-message"></div>
+    </div>
+    <div class="email-message">
+        ✨ Analyse personnalisée • Conseils d'experts • 100% gratuit
+    </div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+    <div class="glass" style="margin:0 auto;max-width:800px;">
+    <h2 style="font-size: 1.2em; margin-bottom: 12px; color:#ff3576; font-weight:700;">Résultat de Compatibilité</h2>
+    <div class="result-score" id="resultScore"></div>
+    <div class="charts-container">
+    <div class="chart-wrapper">
+    <div class="chart-title">Compatibilité Globale</div>
+    <canvas id="globalChart" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-wrapper">
+    <div class="chart-title">Compatibilité par Axe</div>
+    <canvas id="themesChart" class="chart-canvas"></canvas>
+    </div>
+    </div>
+    <div class="analysis-section">
+    <div class="analysis-title">Analyse Générale</div>
+    <div class="analysis-text" id="globalAnalysis"></div>
+    </div>
+    <div class="theme-analysis" id="themeAnalysis"></div>
+    <button class="restart-btn" onclick="location.reload()">Recommencer</button>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // Regroupement des thèmes en 6 axes principaux avec noms raccourcis
+    const themeMap = {
+    'Communication': 'Communication',
+    'Affection': 'Communication',
+    'Humour': 'Communication',
+    'Jalousie': 'Valeurs',
+    'Valeurs': 'Valeurs',
+    'Avenir': 'Valeurs',
+    'Intimité': 'Intimité',
+    'Intimité Avancée': 'Intimité',
+    'Attraction': 'Intimité',
+    'Lifestyle': 'Lifestyle',
+    'Personnalité': 'Lifestyle',
+    'Argent': 'Argent',
+    'Astrologie': 'Astrologie'
+    };
+
+    // Noms raccourcis pour l'affichage dans le graphique
+    const axes = [
+    'Communication',
+    'Intimité',
+    'Valeurs',
+    'Lifestyle',
+    'Argent',
+    'Astrologie'
+    ];
+
+    // Mapping pour les analyses détaillées (noms complets)
+    const axesFullNames = {
+    'Communication': 'Communication & Affection',
+    'Intimité': 'Intimité & Fantasmes',
+    'Valeurs': 'Valeurs & Projets',
+    'Lifestyle': 'Lifestyle & Personnalité',
+    'Argent': 'Argent & Gestion',
+    'Astrologie': 'Astrologie'
+    };
+
+    // Questions complètes avec signes astrologiques améliorés
+    const questions = [
+    // Questions sur les signes astrologiques - AMÉLIORÉES
+    {
+    text: "{prenom1}, quel est votre signe astrologique ?",
+    options: [
+    ["Bélier", "Taureau", "Gémeaux", "Cancer", "Lion", "Vierge"],
+    ["Balance", "Scorpion", "Sagittaire", "Capricorne", "Verseau", "Poissons"]
+    ],
+    theme: 'Astrologie',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel est votre signe astrologique ?",
+    options: [
+    ["Bélier", "Taureau", "Gémeaux", "Cancer", "Lion", "Vierge"],
+    ["Balance", "Scorpion", "Sagittaire", "Capricorne", "Verseau", "Poissons"]
+    ],
+    theme: 'Astrologie',
+    person: 2
+    },
+
+    // Questions alternées
+    {
+    text: "{prenom1}, quel élément vous semble le plus en résonance avec votre personnalité ?",
+    options: ["Feu (passionné, énergique)", "Terre (stable, pratique)", "Air (curieux, communicatif)", "Eau (émotionnel, intuitif)"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, combien de temps vous faut-il pour surmonter une déception ?",
+    options: ["Quelques heures", "Quelques jours", "Quelques semaines", "Plusieurs mois"],
+    theme: 'Personnalité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, êtes-vous du genre à pardonner facilement ?",
+    options: ["Oui, très facilement", "Oui, mais ça prend du temps", "Non, difficilement", "Non, jamais"],
+    theme: 'Communication',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel est votre type d'humour préféré ?",
+    options: ["Humour noir", "Humour absurde", "Humour sarcastique", "Humour léger et bon enfant"],
+    theme: 'Humour',
+    person: 2
+    },
+    {
+    text: "{prenom1}, avez-vous un sens de l'humour sarcastique ?",
+    options: ["Oui", "Non"],
+    theme: 'Humour',
+    person: 1
+    },
+    {
+    text: "{prenom2}, qu'est-ce qui déclenche le plus votre jalousie ?",
+    options: ["L'attention de mon partenaire envers d'autres", "Le manque de communication", "Les secrets", "L'infidélité"],
+    theme: 'Jalousie',
+    person: 2
+    },
+    {
+    text: "{prenom1}, êtes-vous une personne jalouse ?",
+    options: ["Très jalouse", "Un peu jalouse", "Rarement jalouse", "Pas du tout jalouse"],
+    theme: 'Jalousie',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel est votre endroit préféré pour être embrassé(e) ?",
+    options: ["Cou", "Lèvres", "Dos", "Partout"],
+    theme: 'Intimité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, aimez-vous sortir souvent ?",
+    options: ["Oui, très souvent", "Oui, de temps en temps", "Non, rarement", "Non, jamais"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quelle est votre attitude face à l'argent ?",
+    options: ["Je dépense sans compter", "J'économise pour l'avenir", "Je suis équilibré(e)", "Je suis plutôt radin(e)"],
+    theme: 'Argent',
+    person: 2
+    },
+    {
+    text: "{prenom1}, êtes-vous du genre à éviter les conflits ?",
+    options: ["Oui, toujours", "Oui, souvent", "Non, parfois", "Non, jamais"],
+    theme: 'Communication',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel est votre langage d'amour physique préféré ?",
+    options: ["Câlins", "Baisers", "Tenir la main", "Massages"],
+    theme: 'Affection',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est l'importance du contact physique ?",
+    options: ["Essentiel", "Important", "Modéré", "Peu important"],
+    theme: 'Affection',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous une personne dépensière ?",
+    options: ["Oui, très", "Oui, un peu", "Non, pas vraiment", "Non, pas du tout"],
+    theme: 'Argent',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre saison préférée ?",
+    options: ["Printemps", "Été", "Automne", "Hiver"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous une personne patiente ?",
+    options: ["Très patiente", "Assez patiente", "Peu patiente", "Pas du tout patiente"],
+    theme: 'Personnalité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quel est votre niveau d'activité physique ?",
+    options: ["Très actif(ve)", "Actif(ve)", "Modéré(e)", "Sédentaire"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, aimez-vous les discussions profondes ?",
+    options: ["Oui, beaucoup", "Oui, parfois", "Non, rarement", "Non, jamais"],
+    theme: 'Communication',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre priorité dans une relation ?",
+    options: ["L'attraction physique", "La communication", "La sécurité financière", "La relation sexuelle"],
+    theme: 'Valeurs',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous à l'aise avec l'idée d'avoir des enfants ?",
+    options: ["Oui, beaucoup", "Oui, quelques-uns", "Peut-être un", "Non, aucun"],
+    theme: 'Avenir',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre attitude face aux manifestations et aux mouvements sociaux ?",
+    options: ["Soutien actif", "Intérêt passif", "Indifférence", "Opposition"],
+    theme: 'Valeurs',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous à l'aise avec l'idée de parler de vos ex ?",
+    options: ["Oui, sans problème", "Oui, mais avec parcimonie", "Non, difficilement", "Non, jamais"],
+    theme: 'Communication',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quel type de vacances préférez-vous ?",
+    options: ["Détente à la plage", "Aventure en montagne", "Visite culturelle", "Voyage humanitaire"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous une personne qui aime les câlins ?",
+    options: ["Oui, beaucoup", "Oui, de temps en temps", "Non, rarement", "Non, pas du tout"],
+    theme: 'Affection',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre définition de la fidélité ?",
+    options: ["Ne pas tromper physiquement", "Être honnête et transparent", "Soutenir l'autre dans ses projets", "Être toujours présent(e)"],
+    theme: 'Valeurs',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment réagissez-vous face à un désaccord ?",
+    options: ["Je me fâche et je me dispute", "J'essaie de comprendre le point de vue de l'autre", "J'évite le conflit", "Je reste calme et je cherche une solution"],
+    theme: 'Communication',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre consommation d'alcool ?",
+    options: ["Quotidienne", "Occasionnelle", "Rare", "Jamais"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quelle est votre vision du mariage ?",
+    options: ["Une institution démodée", "Un engagement sacré", "Une option à considérer", "Une source de sécurité"],
+    theme: 'Avenir',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quel type de cadeau préférez-vous recevoir ?",
+    options: ["Quelque chose d'utile", "Quelque chose de sentimental", "Quelque chose de luxueux", "Une expérience"],
+    theme: 'Affection',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment exprimez-vous votre amour ?",
+    options: ["Par des cadeaux", "Par des mots doux", "Par des actes de service", "Par le contact physique"],
+    theme: 'Affection',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quel est votre niveau de stress ?",
+    options: ["Très élevé", "Élevé", "Modéré", "Faible"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quelle est votre définition d'une nuit parfaite ?",
+    options: ["Romantique", "Aventureuse", "Relaxante", "Passionnée"],
+    theme: 'Intimité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre plus grande peur ?",
+    options: ["La solitude", "L'échec", "La mort", "L'abandon"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel type de divertissement préférez-vous ?",
+    options: ["Sorties culturelles (théâtre, musée)", "Événements sportifs", "Concerts", "Soirées entre amis en boîte"],
+    theme: 'Lifestyle',
+    person: 2
+    },
+    {
+    text: "{prenom1}, comment gérez-vous les tâches ménagères ?",
+    options: ["Je les fais régulièrement", "Je les remets à plus tard", "Je les partage équitablement", "Je les délègue"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, est-ce que l'amitié homme-femme existe-t-il pour vous ?",
+    options: ["Oui, absolument", "Oui, mais c'est compliqué", "Non, pas vraiment", "Non, impossible"],
+    theme: 'Valeurs',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quel est votre style de communication ?",
+    options: ["Direct et honnête", "Diplomate et attentionné", "Passif et évitant", "Agressif et dominant"],
+    theme: 'Communication',
+    person: 1
+    },
+    {
+    text: "{prenom2}, que pensez-vous de l'importance de la famille ?",
+    options: ["Essentielle", "Importante", "Relative", "Sans importance"],
+    theme: 'Valeurs',
+    person: 2
+    },
+    {
+    text: "{prenom1}, avez-vous déjà réalisé un de vos fantasmes ?",
+    options: ["Oui", "Non"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, que pensez-vous de l'importance de l'argent ?",
+    options: ["Essentielle", "Importante", "Relative", "Sans importance"],
+    theme: 'Argent',
+    person: 2
+    },
+    {
+    text: "{prenom1}, qu'est-ce qui vous attire le plus chez une personne (physiquement) ?",
+    options: ["Yeux", "Corps", "Cheveux", "Sourire"],
+    theme: 'Attraction',
+    person: 1
+    },
+    {
+    text: "{prenom2}, que pensez-vous de l'importance de la santé ?",
+    options: ["Essentielle", "Importante", "Relative", "Sans importance"],
+    theme: 'Lifestyle',
+    person: 2
+    },
+    {
+    text: "{prenom1}, aimez-vous prendre les devants ?",
+    options: ["Oui", "Non"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment préférez-vous passer vos soirées ?",
+    options: ["Sortir avec des amis", "Regarder la télévision", "Lire un livre", "Faire du sport"],
+    theme: 'Lifestyle',
+    person: 2
+    },
+    {
+    text: "{prenom1}, êtes-vous intéressé(e) par les jeux de rôle ?",
+    options: ["Oui", "Non", "Peut-être"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment préférez-vous passer vos vacances ?",
+    options: ["À la plage", "À la montagne", "En ville", "À la campagne"],
+    theme: 'Lifestyle',
+    person: 2
+    },
+    {
+    text: "{prenom1}, aimez-vous les gestes romantiques ?",
+    options: ["Oui", "Non"],
+    theme: 'Affection',
+    person: 1
+    },
+    {
+    text: "{prenom2}, quel est votre endroit préféré pour faire l'amour (en dehors de la chambre) ?",
+    options: ["Plage", "Voiture", "Douche", "Je préfère ne pas répondre"],
+    theme: 'Intimité Avancée',
+    person: 2
+    },
+    {
+    text: "{prenom1}, préférez-vous les préliminaires longs ?",
+    options: ["Oui", "Non", "Ça dépend"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous à l'aise avec les sextoys ?",
+    options: ["Oui", "Non", "Peut-être"],
+    theme: 'Intimité Avancée',
+    person: 2
+    },
+    {
+    text: "{prenom1}, aimez-vous parler pendant l'intimité ?",
+    options: ["Oui", "Non", "Ça dépend"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment réagissez-vous face à la critique ?",
+    options: ["Je me vexe", "J'essaie de m'améliorer", "Je l'ignore", "Je me défends"],
+    theme: 'Personnalité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, avez-vous des fantasmes inavouables ?",
+    options: ["Oui", "Non"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, qu'est-ce qui vous excite le plus qu'on vous dise ?",
+    options: ["Compliments sur votre corps", "Mots doux", "Expressions de désir", "Des insultes"],
+    theme: 'Intimité Avancée',
+    person: 2
+    },
+    {
+    text: "{prenom1}, croyez-vous à l'astrologie ?",
+    options: ["Oui", "Non"],
+    theme: 'Astrologie',
+    person: 1
+    },
+    {
+    text: "{prenom2}, vous intéressez-vous à la politique ?",
+    options: ["Oui", "Non"],
+    theme: 'Valeurs',
+    person: 2
+    },
+    {
+    text: "{prenom1}, vous considérez-vous comme...",
+    options: ["De gauche", "De droite", "Du centre", "Apolitique"],
+    theme: 'Valeurs',
+    person: 1
+    },
+    {
+    text: "{prenom2}, à quelle fréquence avez-vous besoin de solitude ?",
+    options: ["Tous les jours", "Plusieurs fois par semaine", "Une fois par semaine", "Rarement"],
+    theme: 'Personnalité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quelle est votre plus grande dépense plaisir ?",
+    options: ["Voyages", "Shopping", "Restaurants", "Divertissements"],
+    theme: 'Argent',
+    person: 1
+    },
+    {
+    text: "{prenom2}, comment gérez-vous les finances en couple ?",
+    options: ["Comptes séparés", "Compte commun", "Les deux", "Chacun gère ses dépenses"],
+    theme: 'Argent',
+    person: 2
+    },
+    {
+    text: "{prenom1}, comment résolvez-vous les désaccords ?",
+    options: ["Discussion calme", "Compromis", "Évitement", "Dispute"],
+    theme: 'Communication',
+    person: 1
+    },
+    {
+    text: "{prenom2}, préférez-vous aborder les problèmes :",
+    options: ["Immédiatement", "Après réflexion", "Ça dépend", "Je les évite"],
+    theme: 'Communication',
+    person: 2
+    },
+    {
+    text: "{prenom1}, quels gestes vous font vous sentir aimé(e) ?",
+    options: ["Mots d'encouragement", "Cadeaux", "Temps de qualité", "Contact physique"],
+    theme: 'Affection',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous plutôt :",
+    options: ["Achats impulsifs", "Planification", "Équilibré(e)", "Économe"],
+    theme: 'Argent',
+    person: 2
+    },
+    {
+    text: "{prenom1}, ce qui teste le plus votre patience :",
+    options: ["Attendre", "Les gens lents", "L'injustice", "L'imprévu"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, votre activité physique préférée est :",
+    options: ["Sport intense", "Marche", "Yoga", "Danse"],
+    theme: 'Lifestyle',
+    person: 2
+    },
+    {
+    text: "{prenom1}, vous préférez les conversations :",
+    options: ["Légères", "Profondes", "Les deux"],
+    theme: 'Communication',
+    person: 1
+    },
+    {
+    text: "{prenom2}, le plus important dans une relation est :",
+    options: ["Confiance", "Communication", "Passion", "Soutien"],
+    theme: 'Valeurs',
+    person: 2
+    },
+    {
+    text: "{prenom1}, vous recherchez chez un partenaire :",
+    options: ["Humour", "Intelligence", "Empathie", "Ambition"],
+    theme: 'Attraction',
+    person: 1
+    },
+    {
+    text: "{prenom2}, en tant que parent, vous seriez :",
+    options: ["Protecteur", "Guide", "Ami", "Exigeant"],
+    theme: 'Avenir',
+    person: 2
+    },
+    {
+    text: "{prenom1}, les limites importantes dans une relation sont :",
+    options: ["Honnêteté", "Respect", "Fidélité", "Communication"],
+    theme: 'Valeurs',
+    person: 1
+    },
+    {
+    text: "{prenom2}, la confiance se construit par :",
+    options: ["Actions", "Paroles", "Transparence", "Cohérence"],
+    theme: 'Communication',
+    person: 2
+    },
+    {
+    text: "{prenom1}, l'alcool dans votre vie sociale est :",
+    options: ["Fréquent", "Occasionnel", "Rare", "Absent"],
+    theme: 'Lifestyle',
+    person: 1
+    },
+    {
+    text: "{prenom2}, vos sources de stress sont :",
+    options: ["Travail", "Argent", "Relations", "Santé"],
+    theme: 'Personnalité',
+    person: 2
+    },
+    {
+    text: "{prenom1}, vous gérez le stress par :",
+    options: ["Sport", "Relaxation", "Socialisation", "Méditation"],
+    theme: 'Personnalité',
+    person: 1
+    },
+    {
+    text: "{prenom2}, les préliminaires sont :",
+    options: ["Essentiels", "Importants", "Optionnels", "Inutiles"],
+    theme: 'Intimité Avancée',
+    person: 2
+    },
+    {
+    text: "{prenom1}, les sujets abordés pendant l'intimité sont :",
+    options: ["Désirs", "Fantasmes", "Sentiments", "Rien"],
+    theme: 'Intimité Avancée',
+    person: 1
+    },
+    {
+    text: "{prenom2}, êtes-vous à l'aise de partager vos fantasmes ?",
+    options: ["Oui", "Non"],
+    theme: 'Intimité Avancée',
+    person: 2
+    }
+    ];
+
+    let currentQuestion = 0;
+    let answers = [];
+    let prenoms = ["", ""];
+    let compatibilityResults = null;
+
+    function showNamesScreen() {
+    document.getElementById('startScreen').classList.remove('active');
+    document.getElementById('namesScreen').classList.add('active');
+    }
+
+    function startTest() {
+    const prenom1 = document.getElementById('prenom1').value.trim();
+    const prenom2 = document.getElementById('prenom2').value.trim();
+    if (!prenom1 || !prenom2) {
+    alert('Veuillez entrer les deux prénoms');
+    return;
+    }
+    prenoms[0] = prenom1;
+    prenoms[1] = prenom2;
+    answers = new Array(questions.length);
+    document.getElementById('namesScreen').classList.remove('active');
+    document.getElementById('questionCard').classList.add('active');
+    showQuestion();
+    }
+
+    function showQuestion() {
+    if (currentQuestion >= questions.length) {
+    // Calculer les résultats et afficher l'écran email
+    compatibilityResults = calculateCompatibility();
+    showEmailScreen();
+    return;
+    }
+    const q = questions[currentQuestion];
+    const progress = (currentQuestion / questions.length) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    let questionText = q.text.replace('{prenom1}', prenoms[0]).replace('{prenom2}', prenoms[1]);
+    document.getElementById('questionTitle').textContent = questionText;
+    let html = '';
+    if (Array.isArray(q.options[0])) {
+    // Affichage en deux colonnes pour les signes avec espacement amélioré
+    html = '<div class="astrology-grid">';
+    for(let col=0;col<2;col++){
+    html += '<div>';
+    q.options[col].forEach((opt, i) => {
+    const idx = col*6+i;
+    const isSelected = answers[currentQuestion] === idx;
+    html += `<button class="option-btn${isSelected ? ' selected' : ''}" onclick="selectOption(${idx})">${opt}</button>`;
+    });
+    html += '</div>';
+    }
+    html += '</div>';
+    } else {
+    q.options.forEach((opt, i) => {
+    const isSelected = answers[currentQuestion] === i;
+    html += `<button class="option-btn${isSelected ? ' selected' : ''}" onclick="selectOption(${i})">${opt}</button>`;
+    });
+    }
+    document.getElementById('options').innerHTML = html;
+    }
+
+    function selectOption(idx) {
+    answers[currentQuestion] = idx;
+    setTimeout(() => {
+    currentQuestion++;
+    showQuestion();
+    }, 200);
+    }
+
+    function showEmailScreen() {
+    document.getElementById('questionCard').classList.remove('active');
+    document.getElementById('emailScreen').classList.add('active');
+    }
+
+    async function submitEmail() {
+    const email = document.getElementById('emailInput').value.trim();
+    const emailBtn = document.getElementById('emailBtn');
+    const emailMessage = document.getElementById('emailMessage');
+
+    if (!email) {
+        emailMessage.innerHTML = '<div class="error-message">Veuillez entrer votre adresse email</div>';
+        return;
+    }
+
+    // Validation email simple
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        emailMessage.innerHTML = '<div class="error-message">Veuillez entrer une adresse email valide</div>';
+        return;
+    }
+
+    // Désactiver le bouton pendant l'envoi
+    emailBtn.disabled = true;
+    emailBtn.textContent = 'Envoi en cours...';
+    emailMessage.innerHTML = '';
+
+    try {
+        // Appel à l'API Brevo
+        const response = await fetch('https://api.brevo.com/v3/contacts', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'api-key': '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'
+            },
+            body: JSON.stringify({
+                email: email,
+                listIds: [5],
+                attributes: {
+                    PRENOM1: prenoms[0],
+                    PRENOM2: prenoms[1],
+                    SCORE_GLOBAL: compatibilityResults.globalScore,
+                    DATE_TEST: new Date().toISOString().split('T')[0]
+                }
+            })
+        });
+
+        if (response.ok || response.status === 400) {
+            // 400 peut signifier que le contact existe déjà, ce qui est OK
+            emailMessage.innerHTML = '<div class="success-message">✅ Email enregistré avec succès !</div>';
+            setTimeout(() => {
+                showResult();
+            }, 1500);
+        } else {
+            throw new Error('Erreur lors de l\'ajout du contact');
+        }
+
+    } catch (error) {
+        console.error('Erreur Brevo:', error);
+        emailMessage.innerHTML = '<div class="error-message">Une erreur est survenue. Vos résultats s\'affichent quand même !</div>';
+        setTimeout(() => {
+            showResult();
+        }, 2000);
+    } finally {
+        emailBtn.disabled = false;
+        emailBtn.textContent = 'Voir mes résultats 💕';
+    }
+    }
+
+    function calculateCompatibility() {
+    const axesScores = {};
+    let totalScore = 0;
+    let totalQuestions = 0;
+    questions.forEach((q, i) => {
+    const axis = themeMap[q.theme] || q.theme;
+    if (!axesScores[axis]) axesScores[axis] = [];
+    axesScores[axis].push({ answer: answers[i], options: Array.isArray(q.options[0]) ? q.options[0].concat(q.options[1]) : q.options });
+    });
+    const themeScores = {};
+    Object.keys(axesScores).forEach(axis => {
+    let axisScore = 0;
+    axesScores[axis].forEach(q => {
+    if (q.answer !== undefined && q.options.length > 1) {
+    axisScore += 1 - Math.abs(0.5 - (q.answer / (q.options.length-1)));
+    }
+    });
+    const percent = axesScores[axis].length ? Math.round((axisScore / axesScores[axis].length) * 100) : 0;
+    themeScores[axis] = percent;
+    totalScore += axisScore;
+    totalQuestions += axesScores[axis].length;
+    });
+    const globalScore = totalQuestions ? Math.round((totalScore / totalQuestions) * 100) : 0;
+    return { globalScore, themeScores };
+    }
+
+    function generateAnalysisTexts(globalScore, themeScores) {
+    let globalAnalysis = '';
+    if (globalScore >= 85) {
+    globalAnalysis = `🎉 Félicitations ${prenoms[0]} et ${prenoms[1]} ! Avec ${globalScore}% de compatibilité, vous formez un couple exceptionnel. Vos personnalités se complètent parfaitement et vous partagez des valeurs fondamentales similaires. Cette harmonie naturelle est un atout précieux pour construire une relation durable et épanouissante.`;
+    } else if (globalScore >= 70) {
+    globalAnalysis = `✨ ${prenoms[0]} et ${prenoms[1]}, votre compatibilité de ${globalScore}% révèle une très belle harmonie ! Vous avez de solides bases communes tout en conservant vos différences qui enrichissent votre relation. Quelques ajustements mineurs pourraient encore renforcer votre complicité.`;
+    } else if (globalScore >= 55) {
+    globalAnalysis = `🤝 Avec ${globalScore}% de compatibilité, ${prenoms[0]} et ${prenoms[1]} avez un potentiel intéressant. Vos différences peuvent être source d'enrichissement mutuel si vous apprenez à les apprivoiser. La communication sera votre meilleur allié pour transformer ces différences en complémentarité.`;
+    } else if (globalScore >= 40) {
+    globalAnalysis = `💪 ${prenoms[0]} et ${prenoms[1]}, votre score de ${globalScore}% indique des défis à relever ensemble. Vos personnalités sont assez différentes, ce qui demande plus d'efforts mais peut aussi créer une dynamique passionnante. L'important est de respecter vos différences et de trouver des terrains d'entente.`;
+    } else {
+    globalAnalysis = `🌟 ${prenoms[0]} et ${prenoms[1]}, avec ${globalScore}% de compatibilité, vous êtes dans une configuration "opposés qui s'attirent". Vos différences marquées peuvent soit créer une alchimie unique, soit générer des tensions. Tout dépendra de votre capacité à vous comprendre et vous accepter mutuellement.`;
+    }
+    return { globalAnalysis };
+    }
+
+    function generateThemeAnalysis(axis, score) {
+    const analyses = {
+    'Communication': {
+    high: `Votre complicité émotionnelle et votre communication sont naturelles. Vous savez vous écouter, vous comprendre et exprimer vos sentiments sans effort.`,
+    medium: `Votre communication et vos marques d'affection sont globalement compatibles, mais quelques ajustements pourraient renforcer votre lien.`,
+    low: `Des efforts seront nécessaires pour mieux vous comprendre et exprimer vos besoins affectifs. La patience et l'écoute seront vos alliées.`
+    },
+    'Intimité': {
+    high: `Votre vie intime est harmonieuse et vos désirs sont en phase. Vous partagez une belle complicité physique et émotionnelle.`,
+    medium: `Vous avez des attentes proches mais quelques différences à explorer ensemble pour plus d'épanouissement.`,
+    low: `Vos besoins intimes sont différents. Le dialogue et l'ouverture d'esprit seront essentiels pour trouver un équilibre.`
+    },
+    'Valeurs': {
+    high: `Vos valeurs et vos projets de vie sont alignés. Vous avancez dans la même direction, ce qui renforce la stabilité de votre couple.`,
+    medium: `Vous partagez l'essentiel de vos valeurs, mais certains projets ou principes diffèrent. Le respect mutuel sera la clé.`,
+    low: `Vos visions de la vie et vos priorités sont très différentes. Il faudra beaucoup de dialogue pour construire un projet commun.`
+    },
+    'Lifestyle': {
+    high: `Vos modes de vie et vos tempéraments s'accordent parfaitement. Vous partagez le même rythme et la même énergie.`,
+    medium: `Quelques différences de style de vie ou de caractère, mais rien d'insurmontable avec de la compréhension.`,
+    low: `Vos habitudes et personnalités sont très contrastées. Trouver un terrain d'entente sera un vrai défi.`
+    },
+    'Argent': {
+    high: `Vous avez la même vision de la gestion financière et des priorités matérielles. Cela facilite la vie à deux.`,
+    medium: `Quelques divergences sur l'argent, mais un dialogue ouvert peut permettre de trouver un équilibre.`,
+    low: `Vos rapports à l'argent sont opposés. Il faudra établir des règles claires pour éviter les tensions.`
+    },
+    'Astrologie': {
+    high: `Vos signes astrologiques et votre rapport à l'astrologie sont très compatibles. Vous partagez une sensibilité commune à ces influences.`,
+    medium: `Vous avez des approches différentes de l'astrologie, mais cela peut enrichir vos échanges.`,
+    low: `Vos visions de l'astrologie sont opposées. Respectez ces différences sans les imposer.`
+    }
+    };
+    const themeData = analyses[axis] || analyses['Valeurs'];
+    if (score >= 70) return themeData.high;
+    else if (score >= 40) return themeData.medium;
+    else return themeData.low;
+    }
+
+    function showResult() {
+    document.getElementById('emailScreen').classList.remove('active');
+    document.getElementById('resultCard').classList.add('active');
+
+    const { globalScore, themeScores } = compatibilityResults;
+    const { globalAnalysis } = generateAnalysisTexts(globalScore, themeScores);
+    document.getElementById('resultScore').textContent = globalScore + '%';
+    document.getElementById('globalAnalysis').textContent = globalAnalysis;
+
+    // Graphique global (donut) - TAILLE FIXE ET CONTRÔLÉE
+    const ctx1 = document.getElementById('globalChart').getContext('2d');
+    new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+    labels: ['Compatible', 'Différences'],
+    datasets: [{
+    data: [globalScore, 100 - globalScore],
+    backgroundColor: ['#ff3576', '#333'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+    legend: {
+    labels: { 
+    color: '#fff',
+    font: { family: 'Montserrat', size: 11 }
+    }
+    }
+    }
+    }
+    });
+
+    // Graphique par axes (barres) - TAILLE FIXE ET CONTRÔLÉE
+    const themeNames = axes;
+    const themeValues = themeNames.map(ax => themeScores[ax] || 0);
+    const ctx2 = document.getElementById('themesChart').getContext('2d');
+    new Chart(ctx2, {
+    type: 'bar',
+    data: {
+    labels: themeNames,
+    datasets: [{
+    label: 'Compatibilité (%)',
+    data: themeValues,
+    backgroundColor: '#ff3576',
+    borderRadius: 5
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+    x: {
+    beginAtZero: true,
+    max: 100,
+    ticks: { 
+    color: '#fff',
+    font: { family: 'Montserrat', size: 10 }
+    },
+    grid: { color: 'rgba(255,255,255,0.1)' }
+    },
+    y: {
+    ticks: { 
+    color: '#fff',
+    font: { family: 'Montserrat', size: 10 },
+    maxRotation: 0
+    },
+    grid: { color: 'rgba(255,255,255,0.1)' }
+    }
+    },
+    plugins: {
+    legend: { display: false },
+    tooltip: {
+    callbacks: {
+    title: function(context) {
+    const shortName = context[0].label;
+    return axesFullNames[shortName] || shortName;
+    }
+    }
+    }
+    }
+    }
+    });
+
+    // Analyses par axe - UTILISE LES NOMS COMPLETS
+    let themeAnalysisHtml = '';
+    axes.forEach(axis => {
+    const score = themeScores[axis] || 0;
+    const fullName = axesFullNames[axis] || axis;
+    const analysis = generateThemeAnalysis(axis, score);
+    let emoji = '';
+    if (score >= 70) emoji = '💚';
+    else if (score >= 40) emoji = '💛';
+    else emoji = '❤️';
+    themeAnalysisHtml += `
+    <div class="theme-card">
+    <div class="theme-name">${emoji} ${fullName}</div>
+    <div class="theme-score">${score}%</div>
+    <div class="theme-text">${analysis}</div>
+    </div>
+    `;
+    });
+    document.getElementById('themeAnalysis').innerHTML = themeAnalysisHtml;
+    }
+  </script>
+</body>
+</html>
